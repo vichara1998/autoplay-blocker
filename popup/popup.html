@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Autoplay Blocker</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="app__header">
+      <img src="../icons/icon48.png" alt="" class="app__logo" width="40" height="40" />
+      <div>
+        <p class="app__eyebrow">A QUIETER WAY TO SCROLL</p>
+        <h1 class="app__title">Autoplay Blocker</h1>
+      </div>
+    </header>
+
+    <section class="site-card" aria-label="Current website status">
+      <div class="site-card__top">
+        <span class="site-card__label">CURRENT SITE</span>
+        <span class="status-pill" id="statusPill">
+          <span class="status-pill__dot" aria-hidden="true"></span>
+          <span id="statusText" aria-live="polite">Checking&hellip;</span>
+        </span>
+      </div>
+      <p class="site-card__name" id="siteName">This page</p>
+    </section>
+
+    <section class="card" aria-label="Blocking controls">
+      <div class="row">
+        <div>
+          <p class="row__label">Protection</p>
+          <p class="row__hint">Block autoplay across supported sites</p>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="globalToggle" aria-label="Enable autoplay blocking everywhere" />
+          <span class="switch__track"><span class="switch__thumb"></span></span>
+        </label>
+      </div>
+
+      <div class="row">
+        <div>
+          <p class="row__label">This website</p>
+          <p class="row__hint">Override the master setting for this site</p>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="siteToggle" aria-label="Enable autoplay blocking for this website" />
+          <span class="switch__track"><span class="switch__thumb"></span></span>
+        </label>
+      </div>
+    </section>
+
+    <button class="button" id="pauseBtn" type="button">
+      <span class="button__icon" aria-hidden="true">Ⅱ</span>
+      Pause videos playing now
+    </button>
+
+    <footer class="app__footer">
+      <a href="#" id="optionsLink">Manage sites <span aria-hidden="true">→</span></a>
+      <span class="app__footer-note">Your settings stay on your device</span>
+    </footer>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
