@@ -9,77 +9,52 @@
 <body>
   <div class="page">
     <header class="page__header">
-      <img src="../icons/icon48.png" alt="" width="52" height="52" />
+      <img src="../icons/icon48.png" alt="" width="48" height="48" />
       <div>
-        <p class="page__eyebrow">YOUR BROWSING, YOUR RULES</p>
         <h1>Autoplay Blocker</h1>
-        <p>Make your feeds quieter, one setting at a time.</p>
+        <p>Choose where video autoplay should be blocked.</p>
       </div>
     </header>
 
-    <section class="overview" aria-label="Protection overview">
-      <div class="overview__copy">
-        <span class="overview__eyebrow">PROTECTION OVERVIEW</span>
-        <h2 id="overviewTitle">Your settings</h2>
-        <p id="siteSummary" aria-live="polite">Loading your site settings&hellip;</p>
-      </div>
-      <div class="overview__count" aria-hidden="true">
-        <strong id="enabledCount">—</strong>
-        <span>sites protected</span>
-      </div>
-    </section>
-
     <section class="card">
       <div class="row">
-        <div class="row__copy">
-          <span class="section-icon section-icon--shield" aria-hidden="true">✓</span>
-          <div>
-            <h2>Protection</h2>
-            <p>Pause or resume autoplay blocking across the extension.</p>
-          </div>
-        </div>
-        <label class="switch">
-          <input type="checkbox" id="globalToggle" aria-label="Enable autoplay blocking everywhere" />
-          <span class="switch__track"><span class="switch__thumb"></span></span>
-        </label>
-      </div>
-    </section>
-
-    <section class="card">
-      <div class="section-heading">
         <div>
-          <h2>Choose your sites</h2>
-          <p class="card__hint">Blocking is on by default for the sites below. Change any site whenever you like.</p>
-        </div>
-        <label class="search">
-          <span class="search__icon" aria-hidden="true">⌕</span>
-          <input id="siteSearch" type="search" placeholder="Find a site" autocomplete="off" aria-label="Search supported sites" />
-        </label>
-      </div>
-      <div id="siteList" class="site-list" aria-live="polite"></div>
-      <p id="emptySearch" class="empty-state" hidden>No sites match that search.</p>
-    </section>
-
-    <section class="card card--permission">
-      <div class="row">
-        <div class="row__copy">
-          <span class="section-icon section-icon--globe" aria-hidden="true">◎</span>
-          <div>
-            <h2>Protect other websites</h2>
-            <p>Extend blocking beyond the supported list. Your browser will ask permission to access all websites.</p>
-          </div>
+          <h2>Enable extension</h2>
+          <p>Master switch. Turn off to pause all blocking everywhere.</p>
         </div>
         <label class="switch">
-          <input type="checkbox" id="allSitesToggle" aria-label="Enable autoplay blocking on all websites" />
+          <input type="checkbox" id="globalToggle" />
           <span class="switch__track"><span class="switch__thumb"></span></span>
         </label>
       </div>
-      <p class="permission-status" id="allSitesStatus" aria-live="polite"></p>
+    </section>
+
+    <section class="card">
+      <h2>Supported sites</h2>
+      <p class="card__hint">Turn blocking on or off for each platform.</p>
+      <div id="siteList" class="site-list"></div>
+    </section>
+
+    <section class="card">
+      <div class="row">
+        <div>
+          <h2>Enable on all websites</h2>
+          <p>
+            Runs the same protection on every site you visit, not just the
+            platforms above. Your browser will ask you to confirm this
+            broader permission.
+          </p>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="allSitesToggle" />
+          <span class="switch__track"><span class="switch__thumb"></span></span>
+        </label>
+      </div>
+      <p class="status" id="allSitesStatus"></p>
     </section>
 
     <footer class="page__footer">
-      <p>Changes save automatically and sync with your browser profile.</p>
-      <span class="page__privacy"><span aria-hidden="true">●</span> Your preferences stay private</span>
+      <p>Settings save automatically and sync with your browser profile.</p>
     </footer>
   </div>
   <script src="options.js"></script>

@@ -13,9 +13,7 @@ const DEFAULT_SETTINGS = {
 
 function normalizeHostname(url) {
   try {
-    const parsedUrl = new URL(url);
-    if (!['http:', 'https:'].includes(parsedUrl.protocol)) return '';
-    return parsedUrl.hostname.replace(/^www\./, '');
+    return new URL(url).hostname.replace(/^www\./, '');
   } catch (err) {
     return '';
   }
@@ -26,13 +24,12 @@ async function init() {
   const siteToggle = document.getElementById('siteToggle');
   const siteNameEl = document.getElementById('siteName');
   const statusEl = document.getElementById('statusText');
-  const statusPill = document.getElementById('statusPill');
   const pauseBtn = document.getElementById('pauseBtn');
   const optionsLink = document.getElementById('optionsLink');
 
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   const hostname = tab?.url ? normalizeHostname(tab.url) : '';
-  siteNameEl.textContent = hostname || 'No website selected';
+  siteNameEl.textContent = hostname || 'this page';
 
   const stored = await chrome.storage.sync.get(DEFAULT_SETTINGS);
   const siteOverrides = stored.siteOverrides || {};
@@ -42,21 +39,16 @@ async function init() {
   const siteValue = siteOverrides[hostname];
   siteToggle.checked = siteValue === undefined ? true : Boolean(siteValue);
   siteToggle.disabled = !globalToggle.checked || !hostname;
-  pauseBtn.disabled = !tab?.id || !hostname;
 
   function refreshStatus() {
     if (!hostname) {
-      statusEl.textContent = 'Unavailable on this page';
-      statusPill.dataset.state = 'off';
+      statusEl.textContent = 'Open a website to see its status.';
     } else if (!globalToggle.checked) {
-      statusEl.textContent = 'Protection is off';
-      statusPill.dataset.state = 'off';
+      statusEl.textContent = 'Blocking is off everywhere.';
     } else if (!siteToggle.checked) {
-      statusEl.textContent = 'Allowed on this site';
-      statusPill.dataset.state = 'off';
+      statusEl.textContent = `Autoplay is allowed on ${hostname}.`;
     } else {
-      statusEl.textContent = 'Protection is on';
-      statusPill.dataset.state = 'on';
+      statusEl.textContent = `Blocking autoplay on ${hostname}.`;
     }
   }
   refreshStatus();
@@ -75,14 +67,12 @@ async function init() {
     refreshStatus();
   });
 
-  pauseBtn.addEventListener('click', async () => {
+  pauseBtn.addEventListener('click', () => {
     if (!tab?.id) return;
-    try {
-      await chrome.tabs.sendMessage(tab.id, { type: 'APB_PAUSE_ALL' });
-      statusEl.textContent = 'Paused videos on this page';
-    } catch {
-      statusEl.textContent = 'No video controls available on this page';
-    }
+    chrome.tabs.sendMessage(tab.id, { type: 'APB_PAUSE_ALL' }).catch(() => {
+      // No content script on this page (e.g. a browser settings page) - ignore.
+    });
+    statusEl.textContent = 'Paused all playing videos on this page.';
     setTimeout(refreshStatus, 1800);
   });
 

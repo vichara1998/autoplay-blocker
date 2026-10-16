@@ -9,56 +9,41 @@
 <body>
   <div class="app">
     <header class="app__header">
-      <img src="../icons/icon48.png" alt="" class="app__logo" width="40" height="40" />
+      <img src="../icons/icon48.png" alt="" class="app__logo" width="36" height="36" />
       <div>
-        <p class="app__eyebrow">A QUIETER WAY TO SCROLL</p>
         <h1 class="app__title">Autoplay Blocker</h1>
+        <p class="app__subtitle" id="statusText">Checking this page&hellip;</p>
       </div>
     </header>
-
-    <section class="site-card" aria-label="Current website status">
-      <div class="site-card__top">
-        <span class="site-card__label">CURRENT SITE</span>
-        <span class="status-pill" id="statusPill">
-          <span class="status-pill__dot" aria-hidden="true"></span>
-          <span id="statusText" aria-live="polite">Checking&hellip;</span>
-        </span>
-      </div>
-      <p class="site-card__name" id="siteName">This page</p>
-    </section>
 
     <section class="card" aria-label="Blocking controls">
       <div class="row">
         <div>
-          <p class="row__label">Protection</p>
-          <p class="row__hint">Block autoplay across supported sites</p>
+          <p class="row__label">Block autoplay everywhere</p>
+          <p class="row__hint">Master switch for the whole extension</p>
         </div>
         <label class="switch">
-          <input type="checkbox" id="globalToggle" aria-label="Enable autoplay blocking everywhere" />
+          <input type="checkbox" id="globalToggle" />
           <span class="switch__track"><span class="switch__thumb"></span></span>
         </label>
       </div>
 
       <div class="row">
         <div>
-          <p class="row__label">This website</p>
-          <p class="row__hint">Override the master setting for this site</p>
+          <p class="row__label">Block on <span id="siteName">this site</span></p>
+          <p class="row__hint">Override just for the current website</p>
         </div>
         <label class="switch">
-          <input type="checkbox" id="siteToggle" aria-label="Enable autoplay blocking for this website" />
+          <input type="checkbox" id="siteToggle" />
           <span class="switch__track"><span class="switch__thumb"></span></span>
         </label>
       </div>
     </section>
 
-    <button class="button" id="pauseBtn" type="button">
-      <span class="button__icon" aria-hidden="true">Ⅱ</span>
-      Pause videos playing now
-    </button>
+    <button class="button" id="pauseBtn" type="button">Pause all videos on this page</button>
 
     <footer class="app__footer">
-      <a href="#" id="optionsLink">Manage sites <span aria-hidden="true">→</span></a>
-      <span class="app__footer-note">Your settings stay on your device</span>
+      <a href="#" id="optionsLink">Manage sites &amp; advanced settings</a>
     </footer>
   </div>
   <script src="popup.js"></script>

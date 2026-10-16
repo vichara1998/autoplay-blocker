@@ -25,8 +25,6 @@ const DEFAULT_SETTINGS = {
   }
 };
 
-let currentSiteOverrides = { ...DEFAULT_SETTINGS.siteOverrides };
-
 const SITE_LABELS = {
   'instagram.com': 'Instagram',
   'facebook.com': 'Facebook',
@@ -45,24 +43,10 @@ const globalToggle = document.getElementById('globalToggle');
 const siteListEl = document.getElementById('siteList');
 const allSitesToggle = document.getElementById('allSitesToggle');
 const allSitesStatus = document.getElementById('allSitesStatus');
-const siteSearch = document.getElementById('siteSearch');
-const emptySearch = document.getElementById('emptySearch');
-const enabledCountEl = document.getElementById('enabledCount');
-const siteSummaryEl = document.getElementById('siteSummary');
-const overviewTitleEl = document.getElementById('overviewTitle');
 
 function buildSiteRow(domain, enabled) {
   const row = document.createElement('div');
   row.className = 'row';
-
-  const identity = document.createElement('div');
-  identity.className = 'site-row__identity';
-
-  const monogram = document.createElement('span');
-  monogram.className = 'site-row__monogram';
-  monogram.setAttribute('aria-hidden', 'true');
-  monogram.textContent = (SITE_LABELS[domain] || domain).replace(/[^a-z0-9]/gi, '').slice(0, 2).toUpperCase();
-  identity.appendChild(monogram);
 
   const labelWrap = document.createElement('div');
 
@@ -83,7 +67,6 @@ function buildSiteRow(domain, enabled) {
   input.type = 'checkbox';
   input.checked = enabled;
   input.dataset.domain = domain;
-  input.setAttribute('aria-label', `Enable autoplay blocking on ${SITE_LABELS[domain] || domain}`);
 
   const track = document.createElement('span');
   track.className = 'switch__track';
@@ -95,62 +78,27 @@ function buildSiteRow(domain, enabled) {
   label.appendChild(input);
   label.appendChild(track);
 
-  identity.appendChild(labelWrap);
-  row.appendChild(identity);
+  row.appendChild(labelWrap);
   row.appendChild(label);
 
   input.addEventListener('change', async () => {
     const stored = await chrome.storage.sync.get({ siteOverrides: DEFAULT_SETTINGS.siteOverrides });
-    currentSiteOverrides = {
-      ...DEFAULT_SETTINGS.siteOverrides,
-      ...stored.siteOverrides,
-      [domain]: input.checked
-    };
-    await chrome.storage.sync.set({ siteOverrides: currentSiteOverrides });
-    await renderOverview();
+    const siteOverrides = { ...stored.siteOverrides, [domain]: input.checked };
+    await chrome.storage.sync.set({ siteOverrides });
   });
 
   return row;
 }
 
-function renderSiteList(query = '') {
-  const normalizedQuery = query.trim().toLowerCase();
-  const matchingSites = Object.keys(DEFAULT_SETTINGS.siteOverrides).filter((domain) => {
-    const label = SITE_LABELS[domain] || domain;
-    return !normalizedQuery || `${label} ${domain}`.toLowerCase().includes(normalizedQuery);
-  });
+async function renderSiteList() {
+  const stored = await chrome.storage.sync.get({ siteOverrides: DEFAULT_SETTINGS.siteOverrides });
+  const siteOverrides = stored.siteOverrides || {};
 
   siteListEl.innerHTML = '';
-  matchingSites.forEach((domain) => {
-    const enabled = currentSiteOverrides[domain] ?? DEFAULT_SETTINGS.siteOverrides[domain];
+  Object.keys(DEFAULT_SETTINGS.siteOverrides).forEach((domain) => {
+    const enabled = siteOverrides[domain] ?? DEFAULT_SETTINGS.siteOverrides[domain];
     siteListEl.appendChild(buildSiteRow(domain, enabled));
   });
-  emptySearch.hidden = matchingSites.length > 0;
-}
-
-async function renderOverview() {
-  const stored = await chrome.storage.sync.get({
-    globalEnabled: DEFAULT_SETTINGS.globalEnabled,
-    allSitesEnabled: DEFAULT_SETTINGS.allSitesEnabled,
-    siteOverrides: DEFAULT_SETTINGS.siteOverrides
-  });
-  const globalEnabled = stored.globalEnabled !== false;
-  const siteOverrides = stored.siteOverrides || {};
-  const protectedCount = globalEnabled
-    ? Object.keys(DEFAULT_SETTINGS.siteOverrides).filter((domain) => (
-      siteOverrides[domain] ?? DEFAULT_SETTINGS.siteOverrides[domain]
-    )).length
-    : 0;
-  const allSitesGranted = stored.allSitesEnabled
-    && await chrome.permissions.contains({ origins: ['<all_urls>'] });
-
-  enabledCountEl.textContent = String(protectedCount);
-  overviewTitleEl.textContent = globalEnabled ? 'Your feeds, under control' : 'Protection is paused';
-  siteSummaryEl.textContent = !globalEnabled
-    ? 'Autoplay blocking is turned off everywhere.'
-    : allSitesGranted
-      ? 'Autoplay blocking is enabled on every website.'
-      : `Blocking is enabled on ${protectedCount} of ${Object.keys(DEFAULT_SETTINGS.siteOverrides).length} supported sites.`;
 }
 
 async function renderGlobalToggle() {
@@ -170,7 +118,6 @@ async function renderAllSitesToggle() {
 
 globalToggle.addEventListener('change', async () => {
   await chrome.storage.sync.set({ globalEnabled: globalToggle.checked });
-  await renderOverview();
 });
 
 allSitesToggle.addEventListener('change', async () => {
@@ -201,15 +148,8 @@ allSitesToggle.addEventListener('change', async () => {
     }
     allSitesStatus.textContent = 'Disabled — only the platforms listed above are covered.';
   }
-  await renderOverview();
-});
-
-siteSearch.addEventListener('input', () => {
-  renderSiteList(siteSearch.value);
 });
 
 (async function init() {
-  const stored = await chrome.storage.sync.get({ siteOverrides: DEFAULT_SETTINGS.siteOverrides });
-  currentSiteOverrides = { ...DEFAULT_SETTINGS.siteOverrides, ...(stored.siteOverrides || {}) };
-  await Promise.all([renderGlobalToggle(), renderSiteList(), renderAllSitesToggle(), renderOverview()]);
+  await Promise.all([renderGlobalToggle(), renderSiteList(), renderAllSitesToggle()]);
 })();
