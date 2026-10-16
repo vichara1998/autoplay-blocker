@@ -1,39 +1,30 @@
-<div align="center">
-  <img src="icons/icon128.png" alt="Autoplay Blocker logo" width="112" height="112">
-  <h1>Autoplay Blocker</h1>
-  <p><strong>Scroll in peace. Play what you choose.</strong></p>
-  <p>Stop surprise videos on social feeds — while keeping the videos you choose to play.</p>
-  <p>
-    <img src="https://img.shields.io/badge/Chrome-supported-4285F4?logo=googlechrome&logoColor=white" alt="Chrome supported">
-    <img src="https://img.shields.io/badge/Brave-supported-FB542B?logo=brave&logoColor=white" alt="Brave supported">
-    <img src="https://img.shields.io/badge/Manifest-V3-6C5CE7" alt="Manifest V3">
-    <img src="https://img.shields.io/badge/privacy-no%20tracking-168A65" alt="No tracking">
-  </p>
-</div>
+# Autoplay Blocker for Social Feeds
 
-<p align="center">
-  <a href="#-features">Features</a> &nbsp;·&nbsp;
-  <a href="#-install">Install</a> &nbsp;·&nbsp;
-  <a href="#-using-it">Using it</a> &nbsp;·&nbsp;
-  <a href="#-how-it-works">How it works</a>
-</p>
+A Manifest V3 browser extension that stops videos from automatically playing
+as you scroll through Instagram, Facebook, X/Twitter, TikTok, LinkedIn,
+Reddit, Pinterest, and Threads. Works in **Google Chrome** and **Brave**
+(and any other Chromium-based browser) without modification.
 
----
+## What it does
 
-## 🌿 Features
+- Patches `HTMLMediaElement.prototype.play()` and the `autoplay`
+  property/attribute on every matched page, so feed videos can't start
+  themselves.
+- Lets through any playback you actually start yourself - clicking a video
+  or its controls, or any `play()` call that happens within ~1.2 seconds of
+  a click/tap/key press, is never blocked.
+- Continuously watches the page (via `MutationObserver`) so videos injected
+  while you scroll an infinite feed are caught too.
+- Per-site toggles, a master on/off switch, and a one-click "pause
+  everything on this page now" button.
+- A quick popup status for the current site, plus searchable site controls and
+  a live protection summary in the settings page.
+- Optional "enable on all websites" mode for sites not in the default list.
 
-| | |
-|:--|:--|
-| 🛡️ **Quiet by default** | Blocks autoplay across Instagram, Facebook, X, TikTok, LinkedIn, Reddit, Pinterest, and Threads. |
-| 🙌 **Your clicks still work** | Videos you choose to play are allowed through. |
-| 🎛️ **Quick controls** | Check the current site, toggle protection, or pause videos from the toolbar popup. |
-| 🔎 **Find your sites** | Search the supported-site list and customize protection for each platform. |
-| 🌍 **Go beyond the list** | Optionally enable protection on all websites with your permission. |
-| 🔒 **Private by design** | No tracking or data collection. Preferences stay in your browser storage. |
+No data is collected, transmitted, or stored anywhere except your own
+browser's local/sync storage (your on/off preferences).
 
-Works in **Google Chrome**, **Brave**, and other Chromium-based browsers.
-
-## 📦 Project structure
+## Project structure
 
 ```
 autoplay-blocker/
@@ -47,9 +38,7 @@ autoplay-blocker/
 └── options/                 Full settings page (per-site list, all-sites mode)
 ```
 
-## 🚀 Install
-
-### Google Chrome
+## Install in Chrome
 
 1. Download/unzip this folder.
 2. Open `chrome://extensions`.
@@ -57,7 +46,7 @@ autoplay-blocker/
 4. Click **Load unpacked** and select the `autoplay-blocker` folder.
 5. Pin the extension from the toolbar puzzle-piece icon for quick access.
 
-### Brave
+## Install in Brave
 
 1. Download/unzip this folder.
 2. Open `brave://extensions`.
@@ -70,7 +59,7 @@ autoplay-blocker/
 > This extension is more targeted: it only blocks playback the page starts
 > on its own, so manually starting a video always still works.
 
-## 🎛️ Using it
+## Using it
 
 - Click the toolbar icon to:
   - See whether autoplay is blocked on the current site.
@@ -84,7 +73,7 @@ autoplay-blocker/
   - Turn on "Enable on all websites" to cover sites beyond the default
     list (this asks your browser to confirm the broader permission).
 
-## ⚙️ How it works
+## How the blocking actually works
 
 Social feeds typically call `videoElement.play()` (or set
 `video.autoplay = true`) from JavaScript once a post scrolls into the
